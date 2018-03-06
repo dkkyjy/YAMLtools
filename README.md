@@ -1,2 +1,2 @@
 # YAMLtools
-Some Tools to mainform the YAML model file of DAMPE
+Some Tools to Mainform the YAML model file of DAMPE

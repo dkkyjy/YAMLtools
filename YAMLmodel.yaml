@@ -1,0 +1,244 @@
+BPLExpCutoff_source:
+  name: BPLExpCutoff_source
+  spatialModel:
+    DEC: {free: '0', max: '90.', min: '-90.', name: DEC, scale: '1.0', value: '21.72'}
+    RA: {free: '0', max: '360.', min: '-360.', name: RA, scale: '1.0', value: '83.45'}
+    type: SkyDirFunction
+  spectrum:
+    BreakValue: {free: '1', max: '10000.0', min: '1.0', name: BreakValue, scale: '1.0',
+      value: '1000.0'}
+    Eabs: {free: '1', max: '300.0', min: '1.0', name: Eabs, scale: '1.0', value: '10.0'}
+    Index1: {free: '1', max: '-1.001', min: '-5.', name: Index1, scale: '1.0', value: '-2.1'}
+    Index2: {free: '1', max: '-1.001', min: '-5.', name: Index2, scale: '1.0', value: '-2.1'}
+    P1: {free: '1', max: '300.0', min: '0.1', name: P1, scale: '1000.0', value: '100.'}
+    Prefactor: {free: '1', max: '100000.0', min: '0.01', name: Prefactor, scale: 1e-09,
+      value: '1'}
+    type: BPLExpCutoff
+  type: PointSource
+BandFunction_source:
+  name: BandFunction_source
+  spatialModel:
+    DEC: {free: '0', max: '90.', min: '-90.', name: DEC, scale: '1.0', value: '21.72'}
+    RA: {free: '0', max: '360.', min: '-360.', name: RA, scale: '1.0', value: '83.45'}
+    type: SkyDirFunction
+  spectrum:
+    Ep: {free: '1', max: '-1.0', min: '-5.0', name: Ep, scale: '1.', value: '0.1'}
+    alpha: {free: '1', max: '-1.0', min: '-5.0', name: alpha, scale: '1.0', value: '-1.8'}
+    beta: {free: '1', max: '-1.0', min: '-5.0', name: beta, scale: '1.0', value: '-2.5'}
+    norm: {free: '1', max: '1000.0', min: 1e-05, name: norm, scale: 1e-09, value: '1.0'}
+    type: BandFunction
+  type: PointSource
+BrokenPowerLaw2_source:
+  name: BrokenPowerLaw2_source
+  spatialModel:
+    DEC: {free: '0', max: '90.', min: '-90.', name: DEC, scale: '1.0', value: '21.72'}
+    RA: {free: '0', max: '360.', min: '-360.', name: RA, scale: '1.0', value: '83.45'}
+    type: SkyDirFunction
+  spectrum:
+    BreakValue: {free: '1', max: '10000.0', min: '30.0', name: BreakValue, scale: '1.0',
+      value: '1000.0'}
+    Index1: {free: '1', max: '-1.0', min: '-5.0', name: Index1, scale: '1.0', value: '-1.8'}
+    Index2: {free: '1', max: '-1.0', min: '-5.0', name: Index2, scale: '1.0', value: '-2.3'}
+    Integral: {free: '1', max: '1000.0', min: '0.001', name: Integral, scale: 1e-04,
+      value: '1.0'}
+    LowerLimit: {free: '0', max: '200000.0', min: '20.0', name: LowerLimit, scale: '1.0',
+      value: '20.0'}
+    UpperLimit: {free: '0', max: '200000.0', min: '20.0', name: UpperLimit, scale: '1.0',
+      value: 2e5}
+    type: BrokenPowerLaw2
+  type: PointSource
+BrokenPowerLaw_source:
+  name: BrokenPowerLaw_source
+  spatialModel:
+    DEC: {free: '0', max: '90.', min: '-90.', name: DEC, scale: '1.0', value: '21.72'}
+    RA: {free: '0', max: '360.', min: '-360.', name: RA, scale: '1.0', value: '83.45'}
+    type: SkyDirFunction
+  spectrum:
+    BreakValue: {free: '1', max: '2000.0', min: '30.0', name: BreakValue, scale: '1.0',
+      value: '1000.0'}
+    Index1: {free: '1', max: '-1.0', min: '-5.', name: Index1, scale: '1.0', value: '-1.8'}
+    Index2: {free: '1', max: '-1.0', min: '-5.', name: Index2, scale: '1.0', value: '-2.3'}
+    Prefactor: {free: '1', max: '1000.0', min: '0.001', name: Prefactor, scale: 1e-09,
+      value: '1'}
+    type: BrokenPowerLaw
+  type: PointSource
+ConstantValue_source:
+  name: ConstantValue_source
+  spatialModel:
+    DEC: {free: '0', max: '90.', min: '-90.', name: DEC, scale: '1.0', value: '21.72'}
+    RA: {free: '0', max: '360.', min: '-360.', name: RA, scale: '1.0', value: '83.45'}
+    type: SkyDirFunction
+  spectrum:
+    Value: {free: '0', max: '10', min: '0', name: Value, scale: '1', value: '1'}
+    type: ConstantValue
+  type: PointSource
+DM_Example:
+  name: DM_Example
+  spatialModel:
+    DEC: {free: '0', max: '90', min: '-90', name: DEC, scale: '1.0', value: '-45.1762'}
+    RA: {free: '0', max: '360', min: '-360', name: RA, scale: '1.0', value: '128.8272'}
+    type: SkyDirFunction
+  spectrum:
+    bratio: {error: '0.1', free: '0', max: '1.0', min: '0.0', name: bratio, scale: '1.0',
+      value: '1'}
+    channel0: {free: '0', max: '10', min: '1', name: channel0, scale: '1.0', value: '4'}
+    channel1: {free: '0', max: '10', min: '1', name: channel1, scale: '1.0', value: '1'}
+    file: $(BASE_DIR)/data/Likelihood/gammamc_dif.dat
+    mass: {error: '1.', free: '0', max: '5000.0', min: '1.', name: mass, scale: '1.0',
+      value: '10'}
+    norm: {error: '1.', free: '0', max: '1.e+5', min: '1.e-5', name: norm, scale: '1.e+20',
+      value: '5.0'}
+    sigmav: {error: '1.', free: '0', max: '5000.0', min: '0.', name: sigmav, scale: '1.e-26',
+      value: '3.0'}
+    type: DMFitFunction
+  type: PointSource
+ExpCutoff_source:
+  name: ExpCutoff_source
+  spatialModel:
+    DEC: {free: '0', max: '90.', min: '-90.', name: DEC, scale: '1.0', value: '21.72'}
+    RA: {free: '0', max: '360.', min: '-360.', name: RA, scale: '1.0', value: '83.45'}
+    type: SkyDirFunction
+  spectrum:
+    Ebreak: {free: '1', max: '300.0', min: '1.0', name: Ebreak, scale: '1.0', value: '10.0'}
+    Index: {free: '1', max: '-1.0', min: '-5.', name: Index, scale: '1.0', value: '-2.1'}
+    P1: {free: '1', max: '300.0', min: '0.1', name: P1, scale: '1000.0', value: '100.'}
+    P2: {free: '0', max: '1.0', min: '-1.0', name: P2, scale: '1.0', value: '0'}
+    P3: {free: '0', max: '1.0', min: '-1.0', name: P3, scale: '1.0', value: '0'}
+    Prefactor: {free: '1', max: '100000.0', min: '0.01', name: Prefactor, scale: 1e-09,
+      value: '50'}
+    Scale: {free: '0', max: '2000.0', min: '30.0', name: Scale, scale: '1.0', value: '100.0'}
+    type: ExpCutoff
+  type: PointSource
+FileFunction_source:
+  name: FileFunction_source
+  spatialModel:
+    DEC: {free: '0', max: '90.', min: '-90.', name: DEC, scale: '1.0', value: '21.72'}
+    RA: {free: '0', max: '360.', min: '-360.', name: RA, scale: '1.0', value: '83.45'}
+    type: SkyDirFunction
+  spectrum:
+    Normalization: {free: '1', max: 1e5, min: 1e-5, name: Normalization, scale: '1',
+      value: '1.0'}
+    file: foo.dat
+    type: FileFunction
+  type: PointSource
+Gaussian_source:
+  name: Gaussian_source
+  spatialModel:
+    DEC: {free: '0', max: '90.', min: '-90.', name: DEC, scale: '1.0', value: '21.72'}
+    RA: {free: '0', max: '360.', min: '-360.', name: RA, scale: '1.0', value: '83.45'}
+    type: SkyDirFunction
+  spectrum:
+    Mean: {free: '1', max: 1e5, min: 1e3, name: Mean, scale: '1.0', value: 7e4}
+    Prefactor: {free: '1', max: '1000.0', min: '0.001', name: Prefactor, scale: 1e-09,
+      value: '1'}
+    Sigma: {free: '1', max: '30', min: 1e4, name: Sigma, scale: '1.0', value: 1e3}
+    type: Gaussian
+  type: PointSource
+LogParabola_source:
+  name: LogParabola_source
+  spatialModel:
+    DEC: {free: '0', max: '90.', min: '-90.', name: DEC, scale: '1.0', value: '21.72'}
+    RA: {free: '0', max: '360.', min: '-360.', name: RA, scale: '1.0', value: '83.45'}
+    type: SkyDirFunction
+  spectrum:
+    Eb: {free: '1', max: 1e4, min: '20', name: Eb, scale: '1', value: '300.'}
+    alpha: {free: '1', max: '10', min: '0', name: alpha, scale: '1.0', value: '1'}
+    beta: {free: '1', max: '10', min: '0', name: beta, scale: '1.0', value: '2'}
+    norm: {free: '1', max: '1000.0', min: '0.001', name: norm, scale: 1e-9, value: '1'}
+    type: LogParabola
+  type: PointSource
+MapCubeFunction_source:
+  name: MapCubeFunction_source
+  spatialModel:
+    Normalization: {free: '0', max: '1000.0', min: '0.001', name: Normalization, scale: '1.0',
+      value: '1.0'}
+    file: $(PATH_TO_FILES)/MapCubeFunction_source.fits
+    map_based_integral: 'true'
+    type: SpatialMap
+  spectrum:
+    Index: {free: '1', max: '-1.0', min: '-5.0', name: Index, scale: '1.0', value: '-2.0'}
+    Integral: {free: '1', max: '1000.0', min: 1e-05, name: Integral, scale: 1e-06,
+      value: '1.0'}
+    LowerLimit: {free: '0', max: '200000.0', min: '20.0', name: LowerLimit, scale: '1.0',
+      value: '20.0'}
+    UpperLimit: {free: '0', max: '200000.0', min: '20.0', name: UpperLimit, scale: '1.0',
+      value: 2e5}
+    type: PowerLaw2
+  type: DiffuseSource
+PLSuperExpCutoff_source:
+  name: PLSuperExpCutoff_source
+  spatialModel:
+    DEC: {free: '0', max: '90.', min: '-90.', name: DEC, scale: '1.0', value: '21.72'}
+    RA: {free: '0', max: '360.', min: '-360.', name: RA, scale: '1.0', value: '83.45'}
+    type: SkyDirFunction
+  spectrum:
+    Cutoff: {free: '1', max: '30000', min: '500', name: Cutoff, scale: '1', value: '3000'}
+    Index1: {free: '1', max: '0', min: '-5', name: Index1, scale: '1', value: '-1.7'}
+    Index2: {free: '1', max: '5', min: '0', name: Index2, scale: '1', value: '1.5'}
+    Prefactor: {free: '1', max: '1000', min: 1e-05, name: Prefactor, scale: 1e-07,
+      value: '1'}
+    Scale: {free: '0', max: '1000', min: '50', name: Scale, scale: '1', value: '200'}
+    type: PLSuperExpCutoff
+  type: PointSource
+PowerLaw2_source:
+  name: PowerLaw2_source
+  spatialModel:
+    DEC: {free: '0', max: '90.', min: '-90.', name: DEC, scale: '1.0', value: '21.72'}
+    RA: {free: '0', max: '360.', min: '-360.', name: RA, scale: '1.0', value: '83.45'}
+    type: SkyDirFunction
+  spectrum:
+    Index: {free: '1', max: '-1.0', min: '-5.0', name: Index, scale: '1.0', value: '-2.0'}
+    Integral: {free: '1', max: '1000.0', min: 1e-05, name: Integral, scale: 1e-06,
+      value: '1.0'}
+    LowerLimit: {free: '0', max: '200000.0', min: '20.0', name: LowerLimit, scale: '1.0',
+      value: '20.0'}
+    UpperLimit: {free: '0', max: '200000.0', min: '20.0', name: UpperLimit, scale: '1.0',
+      value: 2e5}
+    type: PowerLaw2
+  type: PointSource
+PowerLaw_source:
+  name: PowerLaw_source
+  spatialModel:
+    DEC: {free: '0', max: '90.', min: '-90.', name: DEC, scale: '1.0', value: '21.72'}
+    RA: {free: '0', max: '360.', min: '-360.', name: RA, scale: '1.0', value: '83.45'}
+    type: SkyDirFunction
+  spectrum:
+    Index: {free: '1', max: '-1.0', min: '-5.', name: Index, scale: '1.0', value: '-2'}
+    Prefactor: {free: '1', max: '1000.0', min: '0.001', name: Prefactor, scale: 1e-09,
+      value: '1'}
+    Scale: {free: '0', max: '2000.0', min: '30.0', name: Scale, scale: '1.0', value: '100.0'}
+    type: PowerLaw
+  type: PointSource
+SmoothBrokenPowerLaw_source:
+  name: SmoothBrokenPowerLaw_source
+  spatialModel:
+    DEC: {free: '0', max: '90.', min: '-90.', name: DEC, scale: '1.0', value: '21.72'}
+    RA: {free: '0', max: '360.', min: '-360.', name: RA, scale: '1.0', value: '83.45'}
+    type: SkyDirFunction
+  spectrum:
+    Beta: {free: '1', max: '10', min: '0.01', name: Beta, scale: '1.0', value: '0.2'}
+    BreakValue: {free: '1', max: 5e5, min: '20', name: BreakValue, scale: '1.0', value: 1e3}
+    Index1: {free: '1', max: '-1.0', min: '-5.0', name: Index1, scale: '1.0', value: '-2.0'}
+    Index2: {free: '1', max: '-1.0', min: '-5.0', name: Index2, scale: '1.0', value: '-2.0'}
+    Prefactor: {free: '1', max: 1e10, min: '0.0', name: Prefactor, scale: 1e-06, value: '1.0'}
+    Scale: {free: '0', max: '2000.0', min: '30.0', name: Scale, scale: '1.0', value: '100.0'}
+    type: SmoothBrokenPowerLaw
+  type: PointSource
+SpatialMap_source:
+  name: SpatialMap_source
+  spatialModel:
+    Prefactor: {free: '0', max: '1000.0', min: '0.001', name: Prefactor, scale: '1.0',
+      value: '1.0'}
+    file: $(PATH_TO_FILE)/SpatialMap_source.fits
+    map_based_integral: 'true'
+    type: SpatialMap
+  spectrum:
+    Index: {free: '1', max: '-1.0', min: '-5.0', name: Index, scale: '1.0', value: '-2.0'}
+    Integral: {free: '1', max: '1000.0', min: 1e-05, name: Integral, scale: 1e-06,
+      value: '1.0'}
+    LowerLimit: {free: '0', max: '200000.0', min: '20.0', name: LowerLimit, scale: '1.0',
+      value: '20.0'}
+    UpperLimit: {free: '0', max: '200000.0', min: '20.0', name: UpperLimit, scale: '1.0',
+      value: 2e5}
+    type: PowerLaw2
+  type: DiffuseSource
