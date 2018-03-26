@@ -7,58 +7,81 @@ class NewModel(object):
         with open(outfile, 'w') as f:
             yaml.dump(self.modelDict, f)
     
-    def __init__(self, filename):
-        self.filename = filename
+    def __init__(self):
         self.modelDict = {}
 
-    def AddPointSource(self, srcName, SpectralType, SpectralPars, skycrd_C):
-        ra = str(skycrd_C[0])
-        dec = str(skycrd_C[1])
-        spectrum = {'type':SpectralType}
-        for parName, parDict in SpectralPars.items():
-            free = str(parDict['free'])
-            scale = str(parDict['scale'])
-            value = str(parDict['value'])
-            parmin = str(parDict['min'])
-            parmax = str(parDict['max'])
-            spectrum[parName] = {'free':free, 'name':parName, 'max':parmax, 'min':parmin, 'scale':scale, 'value':value}
+    def AddSrcDict(self, srcName, srcDict):
+        self.modelDict[srcName] = srcDict
+
+    def AddSpectralDict(self, srcName, spectialDict):
+        self.modelDict[srcName]['spectrum'] = spectialDict
+
+    def AddSpatialDict(self, srcName, spatialDict):
+        self.modelDict[srcName]['spatialModel'] = spatialDict
+
+    def AddPointSource(self, srcName, SpectralType=None, SpectralPars=None, skycrd_C=None):
+        if SpectralType:
+            spectrum = {'type':SpectralType}
+        else:
+            spectrum = {}
+        if SpectralPars:
+            for parName, parDict in SpectralPars.items():
+                free = str(parDict['free'])
+                scale = str(parDict['scale'])
+                value = str(parDict['value'])
+                parmin = str(parDict['min'])
+                parmax = str(parDict['max'])
+                spectrum[parName] = {'free':free, 'name':parName, 'max':parmax, 'min':parmin, 'scale':scale, 'value':value}
+
+        if skycrd_C:
+            ra = str(skycrd_C[0])
+            dec = str(skycrd_C[1])
+            spatialModel = {'type': 'SkyDirFunction',
+                                 'RA': {'free':'0', 'max':'360.', 'min':'-360.', 'scale':'1', 'value':ra},
+                                'DEC': {'free':'0', 'max':'90.', 'min':'-90.', 'scale':'1', 'value':dec}
+                           }
+        else:
+            spatialModel = {}
 
         source = {'name': srcName,
                   'type': 'PointSource',
-                  'spectrum': spectrum,
-                  'spatialModel': {'type': 'SkyDirFunction',
-                                     'RA': {'free':'0', 'max':'360.', 'min':'-360.', 'scale':'1', 'value':ra},
-                                    'DEC': {'free':'0', 'max':'90.', 'min':'-90.', 'scale':'1', 'value':dec}
-                                  }
+              'spectrum': spectrum,
+          'spatialModel': spatialModel
                  }
         self.modelDict[srcName] = source
-        self.SaveModel(self.filename)
 
-    def AddDiffuseSource(self, srcName, SpectralType, SpectralPars, SpatialType, SpatialFile, SpatialPar):
-        spectrum = {'type':SpectralType}
-        for parName, parDict in SpectralPars.items():
-            free = str(parDict['free'])
-            scale = str(parDict['scale'])
-            value = str(parDict['value'])
-            parmin = str(parDict['min'])
-            parmax = str(parDict['max'])
-            spectrum[parName] = {'free':free, 'name':parName, 'max':parmax, 'min':parmin, 'scale':scale, 'value':value}
+    def AddDiffuseSource(self, srcName, SpectralType=None, SpectralPars=None, SpatialType=None, SpatialFile=None, SpatialPar=None):
+        if SpectralType:
+            spectrum = {'type':SpectralType}
+        else:
+            spectrum = {}
+        if SpectralPars:
+            for parName, parDict in SpectralPars.items():
+                free = str(parDict['free'])
+                scale = str(parDict['scale'])
+                value = str(parDict['value'])
+                parmin = str(parDict['min'])
+                parmax = str(parDict['max'])
+                spectrum[parName] = {'free':free, 'name':parName, 'max':parmax, 'min':parmin, 'scale':scale, 'value':value}
 
-        name = SpatialPar['name']
-        free = str(SpatialPar['free'])
-        scale = str(SpatialPar['scale'])
-        value = str(SpatialPar['value'])
-        parmin = str(SpatialPar['min'])
-        parmax = str(SpatialPar['max'])
-        spatialModel = {'type': SpatialType, 'file': SpatialFile}
-        spatialModel[name] = {'free':free, 'name':name, 'min':parmin, 'max':parmax, 'scale':scale, 'value':value}
+        if SpatialFile and SpatialType:
+            spatialModel = {'type': SpatialType, 'file': SpatialFile}
+        else:
+            spatialModel = {}
+        if SpatialPar:
+            name = SpatialPar['name']
+            free = str(SpatialPar['free'])
+            scale = str(SpatialPar['scale'])
+            value = str(SpatialPar['value'])
+            parmin = str(SpatialPar['min'])
+            parmax = str(SpatialPar['max'])
+            spatialModel[name] = {'free':free, 'name':name, 'min':parmin, 'max':parmax, 'scale':scale, 'value':value}
 
         source = {'name': srcName,
                   'type': 'DiffuseSource',
                   'spectrum': spectrum,
                   'spatialModel': spatialModel}
         self.modelDict[srcName] = source
-        self.SaveModel(self.filename)
 
 
 class LoadModel(NewModel):
@@ -110,17 +133,43 @@ class LoadModel(NewModel):
         source = self.modelDict[srcName]
         print(source.values())
 
+    def GetSrcDict(self, srcName):
+        source = self.modelDict[srcName]
+        return source
+
+    def GetSrcDir(self, srcName):
+        source = self.modelDict[srcName]
+        if source['type'] == 'PointSource':
+            ra = float(source['spatialModel']['RA']['value'])
+            dec = float(source['spatialModel']['DEC']['value'])
+        if source['type'] == 'DiffuseSource':
+            ra = float(source['RA'])
+            dec = float(source['DEC'])
+        return (ra, dec)
+
     def GetSpectralType(self, srcName):
         spectrum = self.modelDict[srcName]['spectrum']
         print(spectrum.values())
+
+    def GetSpectralDict(self, srcName):
+        spectrum = self.modelDict[srcName]['spectrum']
+        return spectrum
 
     def GetSpatialType(self, srcName):
         spatialModel = self.modelDict[srcName]['spatialModel']
         print(spatialModel.values())
 
+    def GetSpatialDict(self, srcName):
+        spatialModel = self.modelDict[srcName]['spatialModel']
+        return spatialModel
+
     def GetParInfo(self, srcName, parName):
         parameter = self.modelDict[srcName]['spectrum'][parName]
         print(parameter.values())
+
+    def GetParDict(self, srcName, parName):
+        parameter = self.modelDict[srcName]['spectrum'][parName]
+        return parameter
 
     def GetParFree(self, srcName, parName):
         parameter = self.modelDict[srcName]['spectrum'][parName]
