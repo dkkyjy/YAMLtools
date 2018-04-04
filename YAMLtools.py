@@ -2,22 +2,75 @@ import yaml
 from pprint import pprint
 from collections import Counter
 
-class NewModel(object):
-    def SaveModel(self, outfile):
-        with open(outfile, 'w') as f:
-            yaml.dump(self.modelDict, f)
-    
+
+class Model(object):
+    def GetModelInfo(self, modelDict):
+        self.SrcList = []
+        self.FixSrcList = []
+        self.FreeSrcList = []
+
+        self.ParList = []
+        self.FixParList = []
+        self.FreeParList = []
+
+        self.ParDict = {}
+        self.FixParDict = {}
+        self.FreeParDict = {}
+
+        for source in modelDict.values():
+            srcName = source['name']
+            self.SrcList.append(srcName)
+            spectrum = source['spectrum']
+            try:
+                SpectralType = spectrum.pop('type')
+                SpectralFile = spectrum.pop('file')
+            except KeyError:
+                pass
+
+            ParList = []
+            FixParList = []
+            FreeParList = []
+            for parName, parameter in spectrum.items():
+                ParList.append(parName)
+                self.ParList.append(srcName + '__' + parName)
+                if parameter['free'] == 0 or parameter['free'] == '0':
+                    FixParList.append(parName)
+                    self.FixParList.append(srcName + '__' + parName)
+                if parameter['free'] == 1 or parameter['free'] == '1':
+                    FreeParList.append(parName)
+                    self.FreeParList.append(srcName + '__' + parName)
+            self.ParDict[srcName] = ParList
+            self.FixParDict[srcName] = FixParList
+            self.FreeParDict[srcName] = FreeParList
+            if FreeParList:
+                self.FreeSrcList.append(srcName)
+            else:
+                self.FixSrcList.append(srcName)
+
+        self.SrcNum = len(self.SrcList)
+        self.FixSrcNum = len(self.FixSrcList)
+        self.FreeSrcNum = len(self.FreeSrcList)
+
+        self.ParNum = len(self.ParList)
+        self.FixParNum = len(self.FixParList)
+        self.FreeParNum = len(self.FreeParList)
+
+
+class NewModel(Model):
     def __init__(self):
         self.modelDict = {}
 
     def AddSrcDict(self, srcName, srcDict):
         self.modelDict[srcName] = srcDict
+        self.GetModelInfo(self.modelDict)
 
     def AddSpectralDict(self, srcName, spectialDict):
         self.modelDict[srcName]['spectrum'] = spectialDict
+        self.GetModelInfo(self.modelDict)
 
     def AddSpatialDict(self, srcName, spatialDict):
         self.modelDict[srcName]['spatialModel'] = spatialDict
+        self.GetModelInfo(self.modelDict)
 
     def AddPointSource(self, srcName, SpectralType=None, SpectralPars=None, skycrd_C=None):
         if SpectralType:
@@ -49,6 +102,7 @@ class NewModel(object):
           'spatialModel': spatialModel
                  }
         self.modelDict[srcName] = source
+        self.GetModelInfo(self.modelDict)
 
     def AddDiffuseSource(self, srcName, SpectralType=None, SpectralPars=None, SpatialType=None, SpatialFile=None, SpatialPar=None):
         if SpectralType:
@@ -82,7 +136,12 @@ class NewModel(object):
                   'spectrum': spectrum,
                   'spatialModel': spatialModel}
         self.modelDict[srcName] = source
+        self.GetModelInfo(self.modelDict)
 
+    def SaveModel(self, outfile):
+        with open(outfile, 'w') as f:
+            yaml.dump(self.modelDict, f)
+    
 
 class LoadModel(NewModel):
     def __init__(self, filename):
@@ -90,44 +149,7 @@ class LoadModel(NewModel):
         self.filename = filename
         with open(filename, 'r') as f:
             self.modelDict = yaml.load(f)
-
-        self.SrcList = []
-        self.FixSrcList = []
-        self.FreeSrcList = []
-
-        self.ParList = []
-        self.FixParList = []
-        self.FreeParList = []
-
-        for source in self.modelDict.values():
-            srcName = source['name']
-            srcType = source['type']
-            self.FixSrcList.append(srcName)
-
-            spectrum = source['spectrum']
-            SpectralType = spectrum['type']
-            spatialModel = source['spatialModel']
-            SpatialType = spatialModel['type']
-
-            for parName, parameter in spectrum.items():
-                self.SrcList.append(srcName)
-                if 'free' not in parameter:
-                    continue
-                self.ParList.append(srcName + '__' + parName)
-                if parameter['free'] == 0 or parameter['free'] == '0':
-                    self.FixParList.append(srcName + '__' + parName)
-                if parameter['free'] == 1 or parameter['free'] == '1':
-                    self.FreeParList.append(srcName + '__' + parName)
-                    self.FreeSrcList.append(srcName)
-                    try:
-                        self.FixSrcList.remove(srcName)
-                    except:
-                        pass
-
-        self.ParsNumDict = dict(Counter(self.SrcList))
-        self.SrcList = list(self.ParsNumDict.keys())
-        self.FreeNumDict = dict(Counter(self.FreeSrcList))
-        self.FreeSrcList = list(self.FreeNumDict.keys())
+        self.GetModelInfo(self.modelDict)
 
     def GetSrcInfo(self, srcName):
         source = self.modelDict[srcName]
@@ -147,7 +169,7 @@ class LoadModel(NewModel):
             dec = float(source['DEC'])
         return (ra, dec)
 
-    def GetSpectralType(self, srcName):
+    def GetSpectralInfo(self, srcName):
         spectrum = self.modelDict[srcName]['spectrum']
         print(spectrum.values())
 
@@ -155,7 +177,7 @@ class LoadModel(NewModel):
         spectrum = self.modelDict[srcName]['spectrum']
         return spectrum
 
-    def GetSpatialType(self, srcName):
+    def GetSpatialInfo(self, srcName):
         spatialModel = self.modelDict[srcName]['spatialModel']
         print(spatialModel.values())
 
@@ -195,26 +217,23 @@ class LoadModel(NewModel):
 
     def SetParScaledValue(self, srcName, parName, value):
         self.modelDict[srcName]['spectrum'][parName]['value'] = str(value)
-        outfile = self.basename + '_SetParScaledValue_{}_{}_{}.yaml'.format(srcName, parName, value)
-        self.SaveModel(outfile)
+        self.GetModelInfo(self.modelDict)
 
     def SetParScale(self, srcName, parName, scale):
         self.modelDict[srcName]['spectrum'][parName]['scale'] = str(scale)
-        outfile = self.basename + '_SetParScale_{}_{}_{}.yaml'.format(srcName, parName, scale)
-        self.SaveModel(outfile)
+        self.GetModelInfo(self.modelDict)
 
     def SetParFree(self, srcName, parName, free):
         self.modelDict[srcName]['spectrum'][parName]['free'] = str(free)
-        outfile = self.basename + '_SetParFree_{}_{}_{}.yaml'.format(srcName, parName, free)
-        self.SaveModel(outfile)
+        self.GetModelInfo(self.modelDict)
 
     def DelSource(self, srcName):
         del self.modelDict[srcName]
-        outfile = self.basename + '_DelSource_{}.yaml'.format(srcName)
-        self.SaveModel(outfile)
+        self.GetModelInfo(self.modelDict)
 
 
 if __name__ == '__main__':
+    '''
     filename = 'myYAMLmodel.yaml'
     myModel = NewModel(filename)
 
@@ -229,24 +248,28 @@ if __name__ == '__main__':
     SpatialFile = 'SpatialMap_source.fits'
     SpatialPar = {'name': "Normalization", 'free':1, 'min':0.001, 'max':1000, 'scale':1, 'value':100}
     myModel.AddDiffuseSource('myDiffuse_source', SpectralType, SpectralPars, SpatialType, SpatialFile, SpatialPar)
+    '''
 
     filename = 'YAMLmodel.yaml'
     model = LoadModel(filename)
-    model.AddPointSource('myPowerLaw_source', SpectralType, SpectralPars, skycrd_C)
+    #model.AddPointSource('myPowerLaw_source', SpectralType, SpectralPars, skycrd_C)
 
     pprint(model.SrcList)
     pprint(model.FixSrcList)
     pprint(model.FreeSrcList)
+    print(model.SrcNum, model.FixSrcNum, model.FreeSrcNum)
     pprint(model.ParList)
     pprint(model.FixParList)
     pprint(model.FreeParList)
-    pprint(model.ParsNumDict)
-    pprint(model.FreeNumDict)
+    print(model.ParNum, model.FixParNum, model.FreeParNum)
+    pprint(model.ParDict)
+    pprint(model.FixParDict)
+    pprint(model.FreeParDict)
 
     srcName = 'PowerLaw_source'
     model.GetSrcInfo(srcName)
-    model.GetSpectralType(srcName)
-    model.GetSpatialType(srcName)
+    model.GetSpectralInfo(srcName)
+    model.GetSpatialInfo(srcName)
 
     parName = 'Prefactor'
     model.GetParInfo(srcName, parName)
@@ -259,4 +282,4 @@ if __name__ == '__main__':
     model.SetParScale(srcName, parName, 1e-10)
     model.SetParFree(srcName, parName, 0)
 
-    model.DelSource('myPowerLaw_source')
+    #model.DelSource('myPowerLaw_source')
