@@ -1,6 +1,8 @@
 import sys
 from DmpST import maptools
 from YAMLtools import NewModel, LoadModel
+from astropy.coordinates import SkyCoord
+from regions import PointSkyRegion, write_ds9
 
 
 def FindCircleSource(catalog, skycrd0_C, srcRad, freeRad, outfile):
@@ -22,15 +24,23 @@ def FindCircleSource(catalog, skycrd0_C, srcRad, freeRad, outfile):
             model.AddSpatialDict(srcName, srcDict['spatialModel'])
     model.SaveModel(outfile)
 
+    regionList = []
     model = LoadModel(outfile)
     for srcName in model.SrcList:
         skycrd_C = model.GetSrcDir(srcName)
+        center = SkyCoord(*skycrd_C, unit='deg')
+        region = PointSkyRegion(center)
+        regionList.append(region)
+
         rad = maptools.Sep(skycrd_C, skycrd0_C)
         if rad > freeRad:
             for parName in model.FreeParDict[srcName]:
                 print(parName)
                 model.SetParFree(srcName, parName, 0)
     model.SaveModel(outfile)
+
+    regfile = outfile.split('.')[0] + '.reg'
+    write_ds9(regionList, regfile)
 
 
 def FindBoxSource(catalog, GorC, srcReg, outfile):
@@ -56,9 +66,14 @@ def FindBoxSource(catalog, GorC, srcReg, outfile):
             model.AddSpatialDict(srcName, srcDict['spatialModel'])
     model.SaveModel(outfile)
 
+    regionList = []
     model = LoadModel(outfile)
     for srcName in model.SrcList:
         skycrd_C = model.GetSrcDir(srcName)
+        center = SkyCoord(*skycrd_C, unit='deg')
+        region = PointSkyRegion(center)
+        regionList.append(region)
+
         if GorC == 'C':
             xref, yref = skycrd_C
         if GorC == 'G':
@@ -70,6 +85,9 @@ def FindBoxSource(catalog, GorC, srcReg, outfile):
                 print(parName)
                 model.SetParFree(srcName, parName, 0)
     model.SaveModel(outfile)
+
+    regfile = outfile.split('.')[0] + '.reg'
+    write_ds9(regionList, regfile)
 
 
 if __name__ == '__main__':
